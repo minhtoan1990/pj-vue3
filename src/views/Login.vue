@@ -36,7 +36,6 @@ export default {
     const store = useStore();
 
     const isLoadingIn = computed(() => store.getters.getIsLoading);
-    console.log(userName);
     // Login with Vuex
     const handleLogin = async () => {
       // await store.login(userName.value, password.value);

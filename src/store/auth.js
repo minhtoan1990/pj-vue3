@@ -13,6 +13,9 @@ const mutations = {
   SET_USER_ADMIN(state, userAdmin) {
     state.userAdmin = userAdmin;
   },
+  REMOVE_USER(state, userId) {
+    state.userAdmin.items = state.userAdmin.items.filter((item) => item.id !== userId);
+  },
   // Login User
   SET_USER(state, user) {
     state.user = user;
@@ -22,7 +25,7 @@ const mutations = {
   },
   SET_USER_ERROR(state, userError) {
     state.userError = userError;
-  }
+  }  
 }
 
 const actions = {
@@ -41,23 +44,39 @@ const actions = {
     }
   },
 
-  async getUserAdmin() {
-    if (isLoggedIn) {
-
+  async getUserAdmin({commit}) {
+    if(state.isLoggedIn) {
       try {
 
-        const response = await axios.post(apiClient.defaults.baseUrlUser + '/admin/users');
-        console.log('admin user: ', response);
+        const response = await axios.get(apiClient.defaults.baseUrlUser + '/admin/users');
+        console.log(response);
         commit('SET_USER_ADMIN', response.data);
-
+  
       } catch (err) {
         console.log(err);
       }
+    } else {
+      router.push('/login');
+    }
+   
+  },
+
+  async removeUserAdmin({commit}, userId) {
+    try{
+      commit('SET_LOADING', true);
+      const response = await axios.delete(apiClient.defaults.baseUrlUser + `/admin/${userId.id}`);
+        if (response.status === 200) {
+            commit('REMOVE_USER', userId.id);
+            commit('SET_LOADING', false);
+        }
+    } catch(error) {
+      commit('SET_LOADING', false);
+      console.error('Error logging in:', error);
     }
   },
   //  Login user
 
-  async login({ commit }, loginData) {
+  async login({ commit, context, dispatch }, loginData) {
     try {
       commit('SET_LOADING', true);
       // // Send login data to API
