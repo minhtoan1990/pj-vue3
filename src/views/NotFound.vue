@@ -1,0 +1,6 @@
+<template>
+  <div>
+    <h2>Page Not Found</h2>
+    <p>The page you requested could not be found.</p>
+  </div>
+</template>
